@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{% block title %}{{ shop.shop_name }}{% endblock %}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #111; margin: 0; padding: 16px; font-size: 13px; }
+  h1, h2, h3 { margin: 0 0 4px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { border-bottom: 1.5px solid #111; font-weight: 600; }
+  td { border-bottom: 1px solid #ddd; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .muted { color: #555; }
+  .center { text-align: center; }
+  .toolbar { margin-bottom: 12px; }
+  .toolbar button { padding: 6px 14px; font-size: 14px; cursor: pointer; }
+  @media print { .toolbar { display: none; } body { padding: 0; } }
+  {% block style %}{% endblock %}
+</style>
+</head>
+<body>
+<div class="toolbar"><button onclick="window.print()">Print</button></div>
+{% block body %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Optional: PostgreSQL for development/production if Docker is available.
+#   docker compose up -d
+# then set DATABASE_URL=postgres://alnoor:alnoor@localhost:5432/alnoor in backend/.env
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alnoor
+      POSTGRES_USER: alnoor
+      POSTGRES_PASSWORD: alnoor
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
