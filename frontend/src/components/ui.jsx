@@ -33,6 +33,18 @@ export function ToastProvider({ children }) {
   );
 }
 
+/* ---------------- Brand ---------------- */
+export function BrandMark({ size = 34 }) {
+  return (
+    <div className="brand-mark" style={{ width: size, height: size }}>
+      <svg width={size * 0.62} height={size * 0.62} viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="36" r="20" fill="none" stroke="var(--on-accent)" strokeWidth="6" />
+        <path d="M22 14 L32 4 L42 14 L32 22 Z" fill="var(--on-accent)" />
+      </svg>
+    </div>
+  );
+}
+
 /* ---------------- Basics ---------------- */
 export function Button({ variant = "", size = "", className = "", ...props }) {
   return <button type="button" className={`btn ${variant} ${size} ${className}`} {...props} />;

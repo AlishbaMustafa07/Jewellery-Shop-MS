@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { BrandMark } from "../components/ui";
 import { useAuth, useGoldRate, useHotkeys, useLocalState, usePermissions } from "../hooks";
 import { date, label, pkr } from "../utils/format";
 
@@ -53,8 +54,11 @@ export default function MainLayout() {
     <div className="app">
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <div className="brand">
-          <div className="name">New Al-Noor Jewellers</div>
-          <div className="sub">{user?.full_name} · {label(user?.role)}</div>
+          <BrandMark />
+          <div>
+            <div className="name">New Al-Noor Jewellers</div>
+            <div className="sub">{user?.full_name} · {label(user?.role)}</div>
+          </div>
         </div>
         <nav className="nav">
           {navFor(perms).map((item, i) =>
@@ -62,6 +66,7 @@ export default function MainLayout() {
               <div key={i} className="section">{item.section}</div>
             ) : (
               <NavLink key={item.to} to={item.to} end={item.end}>
+                <span className="dot" />
                 {item.label}
                 {item.kbd && <span className="kbd hide-mobile">{item.kbd}</span>}
               </NavLink>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { errorMessage } from "../../api/client";
-import { Alert, Button, Input } from "../../components/ui";
+import { Alert, BrandMark, Button, Input } from "../../components/ui";
 import { useAuth } from "../../hooks";
 
 export default function LoginPage() {
@@ -30,26 +30,34 @@ export default function LoginPage() {
 
   return (
     <div className="auth">
-      <form className="card" onSubmit={submit}>
-        <div className="card-body stack">
-          <div className="center">
-            <svg width="44" height="44" viewBox="0 0 64 64" aria-hidden="true">
-              <circle cx="32" cy="36" r="20" fill="none" stroke="var(--accent)" strokeWidth="6" />
-              <path d="M22 14 L32 4 L42 14 L32 22 Z" fill="var(--accent)" />
-            </svg>
-            <h1 style={{ marginTop: 6 }}>New Al-Noor Jewellers</h1>
-            <div className="muted small">Shop management system</div>
+      <div className="auth-shell">
+        <div className="auth-brand">
+          <BrandMark size={56} />
+          <div>
+            <h1 className="name">New Al-Noor Jewellers</h1>
+            <div className="sub">Shop management system</div>
           </div>
-          {error && <Alert kind="error">{error}</Alert>}
-          <Input label="Username" value={username} onChange={(e) => setUsername(e.target.value)} autoFocus
-            autoComplete="username" required />
-          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password" required />
-          <Button type="submit" variant="primary" className="lg" style={{ width: "100%" }} disabled={busy}>
-            {busy ? "Signing in…" : "Sign in"}
-          </Button>
+          <div className="pitch">Sales, stock, gold rates, cash book and reports — all in one place, built for the counter.</div>
         </div>
-      </form>
+        <div className="auth-form">
+          <form className="card" onSubmit={submit}>
+            <div className="card-body stack">
+              <div>
+                <h1>Welcome back</h1>
+                <div className="muted small" style={{ marginTop: 4 }}>Sign in to continue</div>
+              </div>
+              {error && <Alert kind="error">{error}</Alert>}
+              <Input label="Username" value={username} onChange={(e) => setUsername(e.target.value)} autoFocus
+                autoComplete="username" required />
+              <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password" required />
+              <Button type="submit" variant="primary" className="lg" style={{ width: "100%" }} disabled={busy}>
+                {busy ? "Signing in…" : "Sign in"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
