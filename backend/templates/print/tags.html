@@ -1,0 +1,28 @@
+{% extends "print/base.html" %}
+{% load humanize_pk %}
+{% block title %}Item tags{% endblock %}
+{% block style %}
+  @page { margin: 6mm; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4mm; }
+  .tag { width: 60mm; border: 1px dashed #999; padding: 2mm 3mm; page-break-inside: avoid; }
+  .tag .code { font-size: 16px; font-weight: 800; letter-spacing: 1px; }
+  .tag .row { display: flex; justify-content: space-between; font-size: 11px; }
+  .tag svg { width: 100%; height: 12mm; }
+{% endblock %}
+{% block body %}
+<div class="tags">
+{% for t in items %}
+  <div class="tag">
+    <div class="row"><span class="code">{{ t.item.code }}</span><span>{{ t.item.get_metal_display }}</span></div>
+    <div class="row"><span>{{ t.item.category }}</span><span>{{ t.item.design }}</span></div>
+    <div class="row"><span>Gross {{ t.item.gross_weight|wt }} g</span><span>Ratti {{ t.item.ratti_kaat }}</span></div>
+    {% if t.item.big_stone_weight or t.item.pd_diamond_weight %}
+    <div class="row"><span>Stone {{ t.item.big_stone_weight|wt }}</span><span>Net {{ t.item.gold_weight|wt }} g</span></div>
+    {% endif %}
+    {{ t.barcode|safe }}
+  </div>
+{% empty %}
+  <p>No items selected.</p>
+{% endfor %}
+</div>
+{% endblock %}

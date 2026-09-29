@@ -1,0 +1,20 @@
+{% extends "print/base.html" %}
+{% load humanize_pk %}
+{% block title %}{{ title }}{% endblock %}
+{% block style %}@page { size: A4; margin: 12mm; }{% endblock %}
+{% block body %}
+<h2>{{ shop.shop_name }}</h2>
+<h3>{{ title }}</h3>
+{% if subtitle %}<div class="muted">{{ subtitle }}</div>{% endif %}
+<table style="margin-top:10px">
+  <thead><tr>{% for key, label in columns %}<th>{{ label }}</th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for row in rows %}
+    <tr>{% for v in row %}<td class="{% if v|is_number %}num{% endif %}">{{ v|cell }}</td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+  {% if totals %}
+  <tfoot><tr>{% for v in totals %}<th class="{% if v|is_number %}num{% endif %}">{{ v|cell }}</th>{% endfor %}</tr></tfoot>
+  {% endif %}
+</table>
+{% endblock %}

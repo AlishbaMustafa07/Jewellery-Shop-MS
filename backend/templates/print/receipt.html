@@ -1,0 +1,78 @@
+{% extends "print/base.html" %}
+{% load humanize_pk %}
+{% block title %}Receipt {{ invoice.number }}{% endblock %}
+{% block style %}
+{% if size == "80mm" %}
+  @page { size: 80mm auto; margin: 3mm; }
+  body { width: 74mm; font-size: 11px; padding: 4px; }
+  .a4only { display: none; }
+  th, td { padding: 2px 2px; }
+{% else %}
+  @page { size: A4; margin: 14mm; }
+  .thermal { display: none; }
+{% endif %}
+  .head { text-align: center; margin-bottom: 8px; }
+  .meta { display: flex; justify-content: space-between; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+  .totals td { border: none; padding: 2px 6px; }
+  .totals tr.strong td { font-weight: 700; border-top: 1.5px solid #111; }
+  .void { color: #b00; font-size: 20px; font-weight: 800; text-align: center; border: 2px solid #b00; padding: 4px; margin: 8px 0; }
+  .footer { text-align: center; margin-top: 12px; font-size: 11px; }
+{% endblock %}
+{% block body %}
+<div class="head">
+  {% if shop.logo and size != "80mm" %}<img src="{{ request.scheme }}://{{ request.get_host }}{{ shop.logo.url }}" alt="" style="max-height:60px"><br>{% endif %}
+  <h2>{{ shop.shop_name }}</h2>
+  {% if shop.address %}<div class="muted">{{ shop.address|linebreaksbr }}</div>{% endif %}
+  {% if shop.phone %}<div class="muted">Ph: {{ shop.phone }}</div>{% endif %}
+</div>
+{% if invoice.status == "voided" %}<div class="void">VOIDED — {{ invoice.void_reason }}</div>{% endif %}
+<div class="meta">
+  <div><strong>Invoice:</strong> {{ invoice.number }}<br><strong>Date:</strong> {{ invoice.date|date:"d/m/Y" }}</div>
+  <div><strong>Customer:</strong> {{ invoice.display_customer }}
+    {% if invoice.customer.phone %}<br>{{ invoice.customer.phone }}{% elif invoice.customer_phone %}<br>{{ invoice.customer_phone }}{% endif %}</div>
+  <div><strong>Gold rate:</strong> {{ invoice.sale_rate|pkr }}/tola
+    {% if invoice.legacy_book %}<br><span class="muted">Book {{ invoice.legacy_book }} / Page {{ invoice.legacy_page }}</span>{% endif %}</div>
+</div>
+<table>
+  <thead><tr>
+    <th>Item</th><th class="num">Wt (g)</th><th class="num a4only">Ratti</th>
+    <th class="num a4only">Gold value</th><th class="num a4only">Making</th><th class="num a4only">Stone</th>
+    <th class="num">Amount</th>
+  </tr></thead>
+  <tbody>
+  {% for l in lines %}
+    <tr>
+      <td>{% if l.stock_item %}<strong>{{ l.stock_item.code }}</strong> {{ l.stock_item.category }}{% else %}{{ l.description }}{% endif %}</td>
+      <td class="num">{{ l.weight|wt }}</td>
+      <td class="num a4only">{{ l.ratti_kaat|default_if_none:"" }}</td>
+      <td class="num a4only">{{ l.gold_value|pkr }}</td>
+      <td class="num a4only">{{ l.making_charges|pkr }}</td>
+      <td class="num a4only">{{ l.stone_value|pkr }}</td>
+      <td class="num">{{ l.line_total|pkr }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if old_gold %}
+<h3 style="margin-top:10px">Old gold received</h3>
+<table>
+  <thead><tr><th>Description</th><th class="num">Wt (g)</th><th class="num">Ratti</th><th class="num">Rate</th><th class="num">Value</th></tr></thead>
+  <tbody>{% for o in old_gold %}
+    <tr><td>{{ o.description|default:"Old gold" }}</td><td class="num">{{ o.weight|wt }}</td><td class="num">{{ o.ratti_kaat }}</td>
+      <td class="num">{{ o.rate|pkr }}</td><td class="num">{{ o.value|pkr }}</td></tr>
+  {% endfor %}</tbody>
+</table>
+{% endif %}
+<table class="totals" style="margin-top:10px; width:auto; margin-left:auto">
+  <tr><td>Subtotal</td><td class="num">{{ invoice.subtotal|pkr }}</td></tr>
+  {% if invoice.discount %}<tr><td>Discount</td><td class="num">-{{ invoice.discount|pkr }}</td></tr>{% endif %}
+  <tr class="strong"><td>Net amount</td><td class="num">Rs {{ invoice.net_amount|pkr }}</td></tr>
+  {% if invoice.old_gold_credit %}<tr><td>Old gold credit</td><td class="num">-{{ invoice.old_gold_credit|pkr }}</td></tr>{% endif %}
+  {% for p in payments %}<tr><td>Paid ({{ p.get_method_display }}) {{ p.date|date:"d/m/Y" }}</td><td class="num">-{{ p.amount|pkr }}</td></tr>{% endfor %}
+  <tr class="strong"><td>Balance</td><td class="num">Rs {{ invoice.balance|pkr }}</td></tr>
+</table>
+<div class="footer">
+  {{ shop.receipt_footer_text|linebreaksbr }}<br>
+  <span class="muted">Served by {{ invoice.salesperson.get_full_name|default:invoice.salesperson.username }}</span>
+</div>
+{% endblock %}
